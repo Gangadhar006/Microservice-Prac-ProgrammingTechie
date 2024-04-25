@@ -18,4 +18,9 @@ public class OrderController {
         orderService.placeOrder(orderRequest);
         return "Order placed successfully!!";
     }
+
+    @GetMapping
+    public String test(){
+        return "<h1>It's Working!</h1>";
+    }
 }
