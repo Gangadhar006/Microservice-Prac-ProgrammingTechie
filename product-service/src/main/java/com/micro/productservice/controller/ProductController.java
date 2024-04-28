@@ -26,4 +26,9 @@ public class ProductController {
     public List<ProductResponse> fetchProducts(){
         return productService.fetchProducts();
     }
+
+    @GetMapping("/test")
+    public String test() {
+        return "<h1>Product Service Test</h1>";
+    }
 }

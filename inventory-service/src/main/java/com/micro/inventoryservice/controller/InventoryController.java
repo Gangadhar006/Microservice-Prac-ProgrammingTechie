@@ -20,4 +20,9 @@ public class InventoryController {
     public List<InventoryResponse> isInStock(@RequestParam List<String> skuCode) {
         return inventoryService.isInStock(skuCode);
     }
+
+    @GetMapping("/test")
+    public String test() {
+        return "<h1>Inventory Service Test</h1>";
+    }
 }

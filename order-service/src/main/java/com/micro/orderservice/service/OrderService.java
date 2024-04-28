@@ -1,5 +1,6 @@
 package com.micro.orderservice.service;
 
+import com.micro.orderservice.event.OrderPlacedEvent;
 import com.micro.orderservice.feign.InventoryFeignClient;
 import com.micro.orderservice.model.Order;
 import com.micro.orderservice.model.OrderItems;
@@ -10,6 +11,7 @@ import com.micro.orderservice.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +25,7 @@ import java.util.UUID;
 public class OrderService {
     private final ModelMapper mapper;
     private final OrderRepository orderRepo;
+    private final KafkaTemplate<String, OrderPlacedEvent> kafkaTemplate;
     //    private final WebClient.Builder webClient;
     private final InventoryFeignClient inventoryFeignClient;
 
@@ -47,9 +50,9 @@ public class OrderService {
 
         if (allProductsIsInStock) {
             orderRepo.save(order);
+            kafkaTemplate.send("notificationTopic", new OrderPlacedEvent(order.getOrderNumber()));
             return "order placed successfully..!";
-        }
-        else
+        } else
             throw new IllegalArgumentException("product is not in stock");
     }
 }
